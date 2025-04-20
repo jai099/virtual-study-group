@@ -4,6 +4,7 @@ const cors = require('cors');
 const http = require('http');
 const {Server} = require('socket.io')
 require('dotenv').config();
+const Message = require('./models/Message')
 
 
 //Routes
@@ -15,7 +16,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: 'http://localhost:3000',     
+        methods: ['GET', 'POST'],
 
     },
 });
@@ -33,7 +35,6 @@ app.get('/', (req, res) => {
 // Real-time chat using Socket.io
 
 io.on('connection', (socket) => {
-    console.log('New user connected:', socket.id);
 
     //Join Group chat 
     socket.on('joinroom', (groupId) => {
@@ -45,15 +46,25 @@ io.on('connection', (socket) => {
     // Sending messages on group
     socket.on('sendMessage', async ({ groupId, sender, text }) => {
         try {
-            const newMessage = new MessageChannel({ groupId, sender, text });
-            await newMessage.save();
+            console.log('Raw Incoming:', { groupId, sender, text });
 
-            //Show message in the same group
+            // 🛠 Validate groupId format before using it
+            if (!mongoose.Types.ObjectId.isValid(groupId)) {
+                console.log('❌ Invalid Group ID:', groupId);
+                return;
+            }
+            const objectId = new mongoose.Types.ObjectId(groupId);
+
+            const newMessage = new Message({ groupId: objectId, sender, text });
+            await newMessage.save();
             io.to(groupId).emit('receiveMessage', newMessage);
+
+            console.log('✅ Saved and Emitted:', newMessage);
         } catch (error) {
-            console.error('Error saving message:', error);
+            console.error('❌ Error saving message:', error);
         }
     });
+
 
 
     // Disconnect
@@ -67,7 +78,7 @@ mongoose.connect(process.env.MONGO_URI)
 
  .then(() => {
         console.log('Connected to MongoDB');
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server started on http://localhost:${PORT}`);
         });
     })
@@ -75,3 +86,5 @@ mongoose.connect(process.env.MONGO_URI)
 .catch((err) => {
         console.log('Error connecting to MongoDB:', err.message);
     });
+
+
