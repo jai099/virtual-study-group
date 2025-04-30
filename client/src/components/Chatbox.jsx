@@ -15,6 +15,20 @@ const ChatBox = ({ groupId, sender }) => {
         
         socket.emit('joinroom', groupId);
 
+        //Fetching old messages
+
+        const fetchMessages = async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/api/messages/${groupId}`);
+                const data = await res.json();
+                setMessages(data);
+            } catch (error) {
+                console.error('Failed to fetch messages:', error);
+            }
+        };
+
+        fetchMessages();
+
         socket.on('receiveMessage', (newMessage) => {
             setMessages((prev) => [...prev, newMessage]);
         });
@@ -27,8 +41,6 @@ const ChatBox = ({ groupId, sender }) => {
         if (message.trim()) {
             
             console.log("Sending:", { groupId, sender, text: message });
-
-            
             socket.emit('sendMessage', { groupId, sender, text: message });
             setMessage('');
         }
@@ -39,11 +51,19 @@ const ChatBox = ({ groupId, sender }) => {
             <h2>Group Chat</h2>
 
             <div className="messages">
-                {Array.isArray(messages) && messages.map((msg, idx) => (
+                {Array.isArray(messages) && messages.map((msg, idx) => {
+                    const time = new Date(msg.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                
+               return (
                     <div key={idx} className="message">
                         <strong>{msg.sender}</strong>: {msg.text}
+                        <div className='timestamp'>{time}</div>
                     </div>
-                ))}
+                );
+            })}
             </div>
 
             <input
@@ -57,5 +77,6 @@ const ChatBox = ({ groupId, sender }) => {
         </div>
     );
 };
+
 
 export default ChatBox;

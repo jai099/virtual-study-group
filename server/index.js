@@ -6,9 +6,9 @@ const {Server} = require('socket.io')
 require('dotenv').config();
 const Message = require('./models/Message')
 
-
 //Routes
 const groupRoutes = require('./routes/groupRoutes');
+const messageRoutes = require('./routes/messageRoutes')
 
 
 
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use('/api/groups', groupRoutes);
-
+app.use('/api/messages', messageRoutes);
 
 app.get('/', (req, res) => {
     res.send('Server is running');
