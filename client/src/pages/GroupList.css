@@ -1,0 +1,32 @@
+.group-list-container {
+    padding: 20px;
+}
+
+.group-card {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.group-card h4 {
+    margin: 0 0 8px;
+}
+
+.group-card p {
+    margin: 0 0 12px;
+}
+
+.group-card button {
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.group-card button:hover {
+    background-color: #0056b3;
+}

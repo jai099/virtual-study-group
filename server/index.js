@@ -34,7 +34,8 @@ app.get('/', (req, res) => {
 
 // Real-time chat using Socket.io
 
-io.on('connection', (socket) => {
+io.on('connection', (socket) =>
+{
 
     //Join Group chat 
     socket.on('joinroom', (groupId) => {
@@ -64,6 +65,16 @@ io.on('connection', (socket) => {
             console.error('❌ Error saving message:', error);
         }
     });
+
+    //user started typing 
+    socket.on('typing', (groupId) => {
+        socket.to(groupId).emit("showTyping")
+    });
+
+    //User stopped typing
+    socket.on('stopTyping', (groupId) => {
+        socket.to(groupId).emit("hideTyping");
+    })
 
 
 
