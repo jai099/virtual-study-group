@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import './ChatBox.css';
 
-// Initialize socket globally
+// ✅ Initialize socket globally
 const socket = io('http://localhost:5000');
 
 const ChatBox = ({ groupId, sender }) => {
@@ -12,16 +12,21 @@ const ChatBox = ({ groupId, sender }) => {
     const messagesEndRef = useRef(null);
     const [typing, setTyping] = useState(false);
     const [someoneTyping, setSomeoneTyping] = useState(false);
-    const typingTimeoutRef = useRef(null); // ✅ Used for typing debounce
+    const typingTimeoutRef = useRef(null);
     const [showVideoCall, setShowVideoCall] = useState(null);
 
-    //creating unique name for jitsi
-    const jitsiRoomName = `StudyGroup-${groupId}`;
+    // ✅ Unique room name for Jitsi
+    const jitsiRoomName = `StudyGroup-${groupId || 'default'}`;
+console.log('🔍 groupId:', groupId);  // Add this line
 
     useEffect(() => {
-        if (!groupId) return;
+        // ✅ Exit early if groupId is not valid
+        if (!groupId) {
+            console.warn('⚠️ No groupId provided. Skipping join and fetch.');
+            return;
+        }
 
-        // Delay join to ensure socket is ready before other emits
+        // ✅ Delay join to ensure socket is ready before other emits
         setTimeout(() => {
             socket.emit('joinroom', groupId);
         }, 100);
@@ -38,21 +43,24 @@ const ChatBox = ({ groupId, sender }) => {
 
         fetchMessages();
 
-        // Listen for incoming messages
+        // ✅ Listen for new messages
         socket.on('receiveMessage', (newMessage) => {
             setMessages((prev) => [...prev, newMessage]);
         });
 
+        // ✅ Cleanup socket listener on unmount or groupId change
         return () => {
             socket.off('receiveMessage');
         };
     }, [groupId]);
 
     useEffect(() => {
+        // ✅ Auto-scroll to latest message
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     useEffect(() => {
+        // ✅ Typing indicators setup
         socket.on('showTyping', () => setSomeoneTyping(true));
         socket.on('hideTyping', () => setSomeoneTyping(false));
 
@@ -63,15 +71,27 @@ const ChatBox = ({ groupId, sender }) => {
     }, []);
 
     const sendMessage = () => {
-        if (message.trim()) {
-            socket.emit('sendMessage', { groupId, sender, text: message });
-            setMessage('');
-            socket.emit('stopTyping', groupId); // ⛔ Stop typing after sending
+        if (!message.trim()) return;
+
+        // ✅ Prevent sending if groupId is invalid
+        if (!groupId) {
+            console.error('❌ Cannot send message. groupId is undefined.');
+            return;
         }
+
+        // ✅ Emit message
+        socket.emit('sendMessage', { groupId, sender, text: message });
+        setMessage('');
+
+        // ✅ Stop typing after sending
+        socket.emit('stopTyping', groupId);
     };
 
     const handleInputChange = (e) => {
         setMessage(e.target.value);
+
+        // ✅ Avoid typing event if groupId is not available
+        if (!groupId) return;
 
         if (!typing) {
             setTyping(true);
@@ -108,14 +128,13 @@ const ChatBox = ({ groupId, sender }) => {
                                 borderRadius: '8px',
                             }}
                         />
-
-            
                         <button onClick={() => setShowVideoCall(false)} style={{ marginTop: '10px' }}>
                             ❌ Close Video Call
                         </button>
                     </div>
                 )}
-                </div>
+            </div>
+
             <div className="messages">
                 {Array.isArray(messages) && messages.map((msg, idx) => {
                     const time = new Date(msg.timestamp).toLocaleTimeString([], {

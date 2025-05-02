@@ -26,7 +26,7 @@ const GroupList = () => {
                 <div key={group._id} className="group-card">
                     <h4>{group.name}</h4>
                     <p><strong>Group ID:</strong>{group._id}</p>
-                    <button onClick={() => handleOpenChat(group._Id)}>💬 Open Chat</button>
+                    <button onClick={() => handleOpenChat(group._id)}>💬 Open Chat</button>
                     <button onClick={() => handleJoinCall(group._id)}>🎥 Join Call</button>
                 </div>
             ))}
