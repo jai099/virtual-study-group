@@ -3,23 +3,23 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const GroupList = () => {
+const GroupList = ({ refreshTrigger }) => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
 
-  // 🧠 Fetch groups from backend
-  const fetchGroups = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/groups");
-      setGroups(response.data);
-    } catch (error) {
-      console.error("Failed to fetch groups", error);
-    }
-  };
-
+  // 🔁 Fetch groups on refresh trigger
   useEffect(() => {
-    fetchGroups(); // On mount
-  }, []);
+    const fetchGroups = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/groups");
+        setGroups(response.data);
+      } catch (error) {
+        console.error("Failed to fetch groups", error);
+      }
+    };
+
+    fetchGroups();
+  }, [refreshTrigger]);
 
   const handleJoinCall = (groupId) => {
     const jitsiRoom = `https://meet.jit.si/StudyGroup-${groupId}`;

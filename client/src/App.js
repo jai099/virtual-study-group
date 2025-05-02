@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import TestChatRoom from './pages/TestChatRoom';
-import GroupList from './pages/GroupList';
-import ChatPage from './pages/ChatPage';
-import CreateGroupForm from './components/CreateGroupForm'; // ✅ make sure this file exists
+// 📁 src/App.js
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import CreateGroupForm from "./components/CreateGroupForm";
+import GroupList from "./components/GroupList"; // ✅ Import from correct path
+import ChatPage from "./pages/ChatPage";
+import TestChatRoom from "./pages/TestChatRoom";
 
 function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // 🚀 Called when a group is created to trigger refresh
   const handleGroupCreated = () => {
     setRefreshTrigger(prev => prev + 1);
   };
@@ -18,11 +20,11 @@ function App() {
         <Route
           path="/"
           element={
-            <>
-              <h1 style={{ textAlign: 'center' }}>📚 Virtual Study Groups</h1>
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <h1>📚 Virtual Study Groups</h1>
               <CreateGroupForm onGroupCreated={handleGroupCreated} />
               <GroupList refreshTrigger={refreshTrigger} />
-            </>
+            </div>
           }
         />
         <Route path="/chat/:groupId" element={<ChatPage />} />
