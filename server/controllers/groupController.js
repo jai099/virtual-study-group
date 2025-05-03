@@ -80,3 +80,30 @@ exports.deleteGroup = async (req, res) => {
         res.status(500).json({ error: "Failed to delete group" })
     }
 };
+
+exports.joinGroup = async (req, res) => {
+    try {
+        const groupId = req.params.id;
+        const { walletAddress } = req.body;
+
+        if (!walletAddress) {
+            return res.status(400).json({ error: "Wallet address is required" })
+        }
+
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ error: "Group not found" })
+        }
+
+        if (group.members.includes(walletAddress)) {
+            return res.status(400).json({ error: "Already a member of this group" })
+        }
+        group.members.push(walletAddress);
+        await group.save();
+
+        res.status(200).json({ message: "Joined group successfully", group });
+    } catch (error) {
+        console.error("Join group error:", error);
+        res.status(500).json({ error: "server error" })
+    }
+};

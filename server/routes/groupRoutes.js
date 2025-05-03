@@ -17,4 +17,6 @@ router.put('/:id', groupController.updateGroup);
 //Delete a group by ID
 router.delete('/:id', groupController.deleteGroup);
 
+
+router.put('/:id/join',groupController.joinGroup)
 module.exports = router;

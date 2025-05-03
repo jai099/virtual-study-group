@@ -1,13 +1,17 @@
-// 📁 src/components/GroupList.jsx
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import styles from "./GroupList.module.css";
+
+const floatingEmojis = ["📚", "📝", "👨‍💻", "👩‍🏫", "📖", "🧠", "📓", "✏️"];
+
+const currentWalletAddress = "0xYourWalletAddress"; // Replace with dynamic address from context or props
 
 const GroupList = ({ refreshTrigger }) => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
 
-  // 🔁 Fetch groups on refresh trigger
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -21,6 +25,17 @@ const GroupList = ({ refreshTrigger }) => {
     fetchGroups();
   }, [refreshTrigger]);
 
+  const handleJoinGroup = async (groupId) => {
+    try {
+      await axios.put(`http://localhost:5000/api/groups/${groupId}/join`, {
+        walletAddress: currentWalletAddress,
+      });
+      alert("Joined group successfully!");
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to join group");
+    }
+  };
+
   const handleJoinCall = (groupId) => {
     const jitsiRoom = `https://meet.jit.si/StudyGroup-${groupId}`;
     window.open(jitsiRoom, "_blank");
@@ -31,16 +46,42 @@ const GroupList = ({ refreshTrigger }) => {
   };
 
   return (
-    <div className="group-list-container">
-      <h2>Available Study Groups</h2>
-      {groups.map((group) => (
-        <div key={group._id} className="group-card">
-          <h4>{group.name}</h4>
-          <p><strong>Group ID:</strong> {group._id}</p>
-          <button onClick={() => handleOpenChat(group._id)}>💬 Open Chat</button>
-          <button onClick={() => handleJoinCall(group._id)}>🎥 Join Call</button>
-        </div>
-      ))}
+    <div className={styles.groupListContainer}>
+      <h2 className={styles.title}>📚 Available Study Groups</h2>
+      {groups.map((group) => {
+        const isMember = group.members.includes(currentWalletAddress);
+        return (
+          <div key={group._id} className={styles.groupCard}>
+            <div className={styles.emojiBackground}>
+              {floatingEmojis.map((emoji, i) => (
+                <div
+                  key={i}
+                  className={styles.emoji}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 10}s`,
+                    fontSize: `${Math.random() * 30 + 20}px`,
+                  }}
+                >
+                  {emoji}
+                </div>
+              ))}
+            </div>
+
+            <h4>{group.name}</h4>
+            <p><strong>Group ID:</strong> {group._id}</p>
+
+            {!isMember ? (
+              <button onClick={() => handleJoinGroup(group._id)}>➕ Join Group</button>
+            ) : (
+              <>
+                <button onClick={() => handleOpenChat(group._id)}>💬 Open Chat</button>
+                <button onClick={() => handleJoinCall(group._id)}>🎥 Join Call</button>
+              </>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
