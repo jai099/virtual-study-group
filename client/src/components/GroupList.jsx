@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,9 +5,7 @@ import styles from "./GroupList.module.css";
 
 const floatingEmojis = ["📚", "📝", "👨‍💻", "👩‍🏫", "📖", "🧠", "📓", "✏️"];
 
-const currentWalletAddress = "0xYourWalletAddress"; // Replace with dynamic address from context or props
-
-const GroupList = ({ refreshTrigger }) => {
+const GroupList = ({ refreshTrigger, currentUsername }) => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
 
@@ -28,7 +25,7 @@ const GroupList = ({ refreshTrigger }) => {
   const handleJoinGroup = async (groupId) => {
     try {
       await axios.put(`http://localhost:5000/api/groups/${groupId}/join`, {
-        walletAddress: currentWalletAddress,
+        username: currentUsername,
       });
       alert("Joined group successfully!");
     } catch (err) {
@@ -49,7 +46,7 @@ const GroupList = ({ refreshTrigger }) => {
     <div className={styles.groupListContainer}>
       <h2 className={styles.title}>📚 Available Study Groups</h2>
       {groups.map((group) => {
-        const isMember = group.members.includes(currentWalletAddress);
+        const isMember = group.members.includes(currentUsername);
         return (
           <div key={group._id} className={styles.groupCard}>
             <div className={styles.emojiBackground}>
