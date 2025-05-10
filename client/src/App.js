@@ -31,7 +31,7 @@ function App() {
         />
 
         <Route
-          path="/groups/:id"
+          path="/group/:id"
           element={<GroupDetails currentUsername={loggedInUsername} />}
         />
 
