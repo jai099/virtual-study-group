@@ -1,3 +1,4 @@
+// ✅ Modified GroupList.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -33,13 +34,8 @@ const GroupList = ({ refreshTrigger, currentUsername }) => {
     }
   };
 
-  const handleJoinCall = (groupId) => {
-    const jitsiRoom = `https://meet.jit.si/StudyGroup-${groupId}`;
-    window.open(jitsiRoom, "_blank");
-  };
-
-  const handleOpenChat = (groupId) => {
-    navigate(`/chat/${groupId}`);
+  const handleViewGroupDetails = (groupId) => {
+    navigate(`/group/${groupId}`);
   };
 
   return (
@@ -47,6 +43,7 @@ const GroupList = ({ refreshTrigger, currentUsername }) => {
       <h2 className={styles.title}>📚 Available Study Groups</h2>
       {groups.map((group) => {
         const isMember = group.members.includes(currentUsername);
+
         return (
           <div key={group._id} className={styles.groupCard}>
             <div className={styles.emojiBackground}>
@@ -71,10 +68,7 @@ const GroupList = ({ refreshTrigger, currentUsername }) => {
             {!isMember ? (
               <button onClick={() => handleJoinGroup(group._id)}>➕ Join Group</button>
             ) : (
-              <>
-                <button onClick={() => handleOpenChat(group._id)}>💬 Open Chat</button>
-                <button onClick={() => handleJoinCall(group._id)}>🎥 Join Call</button>
-              </>
+              <button onClick={() => handleViewGroupDetails(group._id)}>🔍 View Group Details</button>
             )}
           </div>
         );

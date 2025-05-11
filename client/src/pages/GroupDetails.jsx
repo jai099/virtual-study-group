@@ -1,10 +1,12 @@
+// ✅ Modified GroupDetails.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './GroupDetails.module.css';
 
 const GroupDetails = ({ currentUsername }) => {
-  const { groupId } = useParams();
+  const { id: groupId } = useParams();
+  const navigate = useNavigate();
   const [group, setGroup] = useState(null);
   const [isMember, setIsMember] = useState(false);
   const [hasRequested, setHasRequested] = useState(false);
@@ -12,7 +14,8 @@ const GroupDetails = ({ currentUsername }) => {
 
   const fetchGroup = async () => {
     try {
-      const res = await axios.get(`/api/groups/${groupId}`);
+      const res = await axios.get(`http://localhost:5000/api/groups/${groupId}`);
+
       setGroup(res.data);
       setIsMember(res.data.members.includes(currentUsername));
       setHasRequested(res.data.pendingRequests?.includes(currentUsername));
@@ -29,7 +32,7 @@ const GroupDetails = ({ currentUsername }) => {
 
   const handleJoinRequest = async () => {
     try {
-      await axios.post(`/api/groups/${groupId}/request`, {
+      await axios.put(`/api/groups/${groupId}/request`, {
         username: currentUsername,
       });
       setHasRequested(true);
@@ -40,7 +43,7 @@ const GroupDetails = ({ currentUsername }) => {
 
   const handleApprove = async (username) => {
     try {
-      await axios.post(`/api/groups/${groupId}/approve`, { username });
+      await axios.put(`/api/groups/${groupId}/approve`, { username });
       setPendingRequests((prev) => prev.filter((u) => u !== username));
       setGroup((prev) => ({
         ...prev,
@@ -53,7 +56,7 @@ const GroupDetails = ({ currentUsername }) => {
 
   const handleDeny = async (username) => {
     try {
-      await axios.post(`/api/groups/${groupId}/deny`, { username });
+      await axios.put(`/api/groups/${groupId}/deny`, { username });
       setPendingRequests((prev) => prev.filter((u) => u !== username));
     } catch (err) {
       console.error('Error denying user:', err);
@@ -61,11 +64,12 @@ const GroupDetails = ({ currentUsername }) => {
   };
 
   const handleOpenChat = () => {
-    alert("Chat feature coming soon!");
+    navigate(`/chat/${groupId}`);
   };
 
   const handleJoinCall = () => {
-    alert("Video call feature coming soon!");
+    const jitsiRoom = `https://meet.jit.si/StudyGroup-${groupId}`;
+    window.open(jitsiRoom, "_blank");
   };
 
   if (!group) return <div className={styles.loading}>Loading group details...</div>;
@@ -74,6 +78,13 @@ const GroupDetails = ({ currentUsername }) => {
     <div className={styles.groupContainer}>
       <h2 className={styles.groupTitle}>{group.name}</h2>
       <p className={styles.groupDescription}>{group.description}</p>
+
+      <h4>👥 Members:</h4>
+      <ul>
+        {group.members.map((member) => (
+          <li key={member}>{member}</li>
+        ))}
+      </ul>
 
       {!isMember && !hasRequested && (
         <button className={styles.groupButton} onClick={handleJoinRequest}>
