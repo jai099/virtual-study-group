@@ -72,6 +72,10 @@ const GroupDetails = ({ currentUsername }) => {
     window.open(jitsiRoom, "_blank");
   };
 
+  const handleOpenWhiteboard = () => {
+    navigate(`/whiteboard/${groupId}`);
+  }
+
   if (!group) return <div className={styles.loading}>Loading group details...</div>;
 
   return (
@@ -100,6 +104,10 @@ const GroupDetails = ({ currentUsername }) => {
           <button className={styles.groupButton} onClick={handleJoinCall}>
             🎥 Join Call
           </button>
+          <button className={styles.groupButton} onClick={handleOpenWhiteboard}>
+             📝 Open Whiteboard
+        </button>
+        
         </div>
       )}
 

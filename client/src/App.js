@@ -5,7 +5,7 @@ import GroupList from "./components/GroupList";
 import ChatPage from "./pages/ChatPage";
 import TestChatRoom from "./pages/TestChatRoom";
 import GroupDetails from "./pages/GroupDetails";
-
+import WhiteboardPage from "./pages/WhiteboardPage";
 function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const loggedInUsername = "jai123"; // 🔐 Replace this with actual login logic later
@@ -37,6 +37,7 @@ function App() {
 
         <Route path="/chat/:groupId" element={<ChatPage currentUsername={loggedInUsername} />} />
         <Route path="/test" element={<TestChatRoom />} />
+        <Route path="/whiteboard/:groupId" element={<WhiteboardPage/>} />
       </Routes>
     </Router>
   );
