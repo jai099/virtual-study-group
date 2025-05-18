@@ -1,7 +1,8 @@
 // ChatBox.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import './ChatBox.css';
+import styles from './ChatBox.module.css';
+
 
 // ✅ Initialize socket globally
 const socket = io('http://localhost:5000');
@@ -14,6 +15,7 @@ const ChatBox = ({ groupId, sender }) => {
     const [someoneTyping, setSomeoneTyping] = useState(false);
     const typingTimeoutRef = useRef(null);
     const [showVideoCall, setShowVideoCall] = useState(null);
+    const [showWhiteboard, setShowWhiteboard] = useState(false);
 
     // ✅ Unique room name for Jitsi
     const jitsiRoomName = `StudyGroup-${groupId || 'default'}`;
@@ -106,36 +108,60 @@ console.log('🔍 groupId:', groupId);  // Add this line
     };
 
     return (
-        <div className="chat-box">
-            <h2>Group Chat</h2>
+        <div className={styles.pageContainer}>
+        <div className={styles.chatBox}>
+            <h2 className={styles.heading}>Group Chat</h2>
 
-            <div style={{ marginBottom: '20px' }}>
-                {!showVideoCall ? (
-                    <button onClick={() => setShowVideoCall(true)}>
-                        🎥 Join Video Call
-                    </button>
-                ) : (
-                    <div>
-                        <iframe
-                            title="Jitsi Video Call"
-                            allow="camera; microphone; fullscreen; display-capture"
-                            src={`https://meet.jit.si/${jitsiRoomName}`}
-                            style={{
-                                width: '100%',
-                                height: '500px',
-                                border: 0,
-                                marginTop: '10px',
-                                borderRadius: '8px',
-                            }}
-                        />
-                        <button onClick={() => setShowVideoCall(false)} style={{ marginTop: '10px' }}>
-                            ❌ Close Video Call
-                        </button>
-                    </div>
-                )}
-            </div>
+            <div className={styles.actionButtons}>
+  {!showVideoCall && (
+    <button onClick={() => setShowVideoCall(true)}>
+      🎥 Join Video Call
+    </button>
+  )}
 
-            <div className="messages">
+  {!showWhiteboard && (
+    <button onClick={() => setShowWhiteboard(true)}>
+      📋 Open Whiteboard
+    </button>
+  )}
+</div>
+
+<div className={styles.videoWhiteboardWrapper}>
+  {showVideoCall && (
+    <iframe
+      title="Jitsi Video Call"
+      allow="camera; microphone; fullscreen; display-capture"
+      src={`https://meet.jit.si/${jitsiRoomName}`}
+      className={styles.videoCallFrame}
+    />
+  )}
+
+  {showWhiteboard && (
+    <iframe
+      title="Excalidraw Whiteboard"
+      src={`/whiteboard/${groupId}`}
+      className={styles.whiteboardFrame}
+    />
+  )}
+</div>
+
+<div className={styles.actionButtons}>
+  {showVideoCall && (
+    <button onClick={() => setShowVideoCall(false)}>
+      ❌ Close Video Call
+    </button>
+  )}
+
+  {showWhiteboard && (
+    <button onClick={() => setShowWhiteboard(false)}>
+      ❌ Close Whiteboard
+    </button>
+  )}
+</div>
+      
+
+
+<div className={styles.messages}>
                 {Array.isArray(messages) && messages.map((msg, idx) => {
                     const time = new Date(msg.timestamp).toLocaleTimeString([], {
                         hour: '2-digit',
@@ -143,7 +169,8 @@ console.log('🔍 groupId:', groupId);  // Add this line
                     });
 
                     return (
-                        <div key={idx} className="message">
+                        <div key={idx} className={styles.message}>
+
                             <strong>{msg.sender}</strong>: {msg.text}
                             <div className="timestamp">{time}</div>
                         </div>
@@ -151,7 +178,7 @@ console.log('🔍 groupId:', groupId);  // Add this line
                 })}
 
                 {someoneTyping && (
-                    <div className="typing-indicator">💬 Someone is typing...</div>
+                     <div className={styles.typingIndicator}>💬 Someone is typing...</div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
@@ -163,8 +190,9 @@ console.log('🔍 groupId:', groupId);  // Add this line
                 onChange={handleInputChange}
                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             />
-            <button onClick={sendMessage}>Send</button>
-        </div>
+            <button onClick={sendMessage}  className={styles.sendButton}>Send</button>
+            </div>
+            </div>
     );
 };
 

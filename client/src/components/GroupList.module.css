@@ -1,113 +1,116 @@
-/* ✅ Light background & centered layout */
 .groupListContainer {
-    max-width: 900px;
+    padding: 40px 20px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+    z-index: 1;
 }
 
-/* ✅ Title style */
 .title {
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    color: #2d3436;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #3b82f6;
+    background: linear-gradient(90deg, #6366f1, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* ✅ Group card container */
 .groupCard {
-    background: #ffffff;
+    position: relative;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
     border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.2rem;
-    text-align: left;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease;
-    animation: fadeInUp 0.5s ease forwards;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    animation: fadeIn 0.5s ease;
+    z-index: 2;
 }
 
-.groupCard:hover {
-    transform: translateY(-4px);
+.groupCard h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #111827;
 }
 
-/* ✅ Buttons */
+.groupCard p {
+    color: #374151;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
 .groupCard button {
-    margin-top: 10px;
-    margin-right: 10px;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: #0984e3;
+    padding: 12px 20px;
+    font-size: 1rem;
+    background: linear-gradient(90deg, #60a5fa, #818cf8);
     color: white;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .groupCard button:hover {
-    background-color: #74b9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(96, 165, 250, 0.4);
 }
 
-/* ✅ Animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0px);
-    }
-}
-
-/* ✅ Responsive */
-@media (max-width: 768px) {
-    .groupCard {
-        padding: 1rem;
-    }
-
-    .title {
-        font-size: 1.5rem;
-    }
-}
-
-/* ✅ Floating emoji container */
 .emojiBackground {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
     height: 100%;
-    pointer-events: none;
+    width: 100%;
     overflow: hidden;
     z-index: 0;
+    pointer-events: none;
 }
 
-/* ✅ Emoji style and animation */
 .emoji {
     position: absolute;
-    font-size: 2rem;
-    animation: float 10s infinite ease-in-out;
-    opacity: 0.3;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    animation: float 15s infinite linear;
+    opacity: 0.1;
 }
 
 @keyframes float {
-    0% {
-        transform: translateY(100vh) rotate(0deg);
+    from {
+        transform: translateY(100vh);
     }
 
-    100% {
-        transform: translateY(-100vh) rotate(360deg);
+    to {
+        transform: translateY(-100vh);
     }
 }
 
-/* ✅ Ensure card content is above background emojis */
-.groupCard {
-    position: relative;
-    z-index: 1;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .groupCard {
+        padding: 20px;
+    }
+
+    .groupCard h4 {
+        font-size: 1.3rem;
+    }
+
+    .groupCard button {
+        width: 100%;
+    }
 }
