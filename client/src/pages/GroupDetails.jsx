@@ -27,7 +27,7 @@ const GroupDetails = ({ currentUsername }) => {
 
   useEffect(() => {
     fetchGroup();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, []);
 
   const handleJoinRequest = async () => {
@@ -38,6 +38,21 @@ const GroupDetails = ({ currentUsername }) => {
       setHasRequested(true);
     } catch (err) {
       console.error('Error sending join request:', err);
+    }
+  };
+  const handleDeleteGroup = async () => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this group?');
+    if (!confirmDelete) return;
+    
+    try {
+      await axios.delete(`http://localhost:5000/api/groups/${groupId}`, {
+        data: { username: currentUsername },
+      });
+
+      alert('Group deleted successfully!');
+      navigate('/');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failes to delete Group')
     }
   };
 
@@ -106,7 +121,12 @@ const GroupDetails = ({ currentUsername }) => {
           </button>
           <button className={styles.groupButton} onClick={handleOpenWhiteboard}>
              📝 Open Whiteboard
+          </button>
+          {group.owner === currentUsername && (
+        <button className={styles.groupButton} onClick={handleDeleteGroup}>
+          🗑️ Delete Group
         </button>
+      )}
         
         </div>
       )}
@@ -133,6 +153,7 @@ const GroupDetails = ({ currentUsername }) => {
           ))}
         </div>
       )}
+      
     </div>
   );
 };

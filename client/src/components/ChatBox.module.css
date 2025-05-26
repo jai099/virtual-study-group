@@ -2,7 +2,7 @@
 
 .chatBox {
     padding: 20px;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: auto;
     background: #fdfdfd;
     border-radius: 12px;
@@ -44,7 +44,7 @@
 .videoCallFrame,
 .whiteboardFrame {
     flex: 1 1 48%;
-    height: 400px;
+    height: 800px;
     border: 2px solid #ccc;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);

@@ -97,3 +97,23 @@ exports.denyRequest = async (req, res) => {
         res.status(500).json({ error: "Deny failed" });
     }
 };
+
+// Deleting a group 
+exports.deleteGroup = async (req, res) => {
+    const { id } = req.params;
+    const { username } = req.body;
+
+    try {
+        const group = await Group.findById(id);
+        if (!group) return res.status(404).json({ error: 'Group not found' });
+
+        if (group.owner !== username) {
+            return res.status(403).json({ error: 'Onlt the group owner can delete the group' });
+        }
+
+        await Group.findByIdAndDelete(id);
+        res.json({ message: 'Group deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete group' });
+    }
+};
