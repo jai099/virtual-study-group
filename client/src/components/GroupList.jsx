@@ -13,7 +13,7 @@ const GroupList = ({ refreshTrigger, currentUsername }) => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/groups");
+        const response = await axios.get("https://virtual-study-group-seven.vercel.app/api/groups");
         setGroups(response.data);
       } catch (error) {
         console.error("Failed to fetch groups", error);
@@ -25,7 +25,7 @@ const GroupList = ({ refreshTrigger, currentUsername }) => {
 
   const handleJoinGroup = async (groupId) => {
     try {
-      await axios.put(`http://localhost:5000/api/groups/${groupId}/join`, {
+      await axios.put(`https://virtual-study-group-seven.vercel.app/api/groups/${groupId}/join`, {
         username: currentUsername,
       });
       alert("Joined group successfully!");

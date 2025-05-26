@@ -17,7 +17,7 @@ const CreateGroupForm = ({ onGroupCreated, owner }) => {
 
       const finalMembers = Array.from(new Set([owner, ...manualMembers])); // ✅ Owner always included
 
-      const response = await axios.post('http://localhost:5000/api/groups', {
+      const response = await axios.post('https://virtual-study-group-seven.vercel.app/api/groups', {
         name,
         description,
         members: finalMembers,

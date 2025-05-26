@@ -5,7 +5,7 @@ import styles from './ChatBox.module.css';
 
 
 // ✅ Initialize socket globally
-const socket = io('http://localhost:5000');
+const socket = io('https://virtual-study-group-seven.vercel.app');
 
 const ChatBox = ({ groupId, sender }) => {
     const [message, setMessage] = useState('');
@@ -35,7 +35,7 @@ console.log('🔍 groupId:', groupId);  // Add this line
 
         const fetchMessages = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/messages/${groupId}`);
+                const res = await fetch(`https://virtual-study-group-seven.vercel.app/api/messages/${groupId}`);
                 const data = await res.json();
                 setMessages(data);
             } catch (error) {

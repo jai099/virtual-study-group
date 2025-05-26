@@ -14,7 +14,7 @@ const GroupDetails = ({ currentUsername }) => {
 
   const fetchGroup = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/groups/${groupId}`);
+      const res = await axios.get(`https://virtual-study-group-seven.vercel.app/api/groups/${groupId}`);
 
       setGroup(res.data);
       setIsMember(res.data.members.includes(currentUsername));
@@ -45,7 +45,7 @@ const GroupDetails = ({ currentUsername }) => {
     if (!confirmDelete) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/groups/${groupId}`, {
+      await axios.delete(`https://virtual-study-group-seven.vercel.app/api/groups/${groupId}`, {
         data: { username: currentUsername },
       });
 

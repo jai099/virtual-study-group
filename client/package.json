@@ -23,7 +23,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "https://virtual-study-group-seven.vercel.app",
   "eslintConfig": {
     "extends": [
       "react-app",
