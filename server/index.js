@@ -25,6 +25,12 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.get('/', (req, res) => {
+    res.send({
+        activeStatus: true,
+        error:false,
+    })
+})
 app.use('/api/groups', groupRoutes);
 app.use('/api/messages', messageRoutes);
 
