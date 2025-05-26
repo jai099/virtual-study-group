@@ -5,7 +5,10 @@ import styles from './ChatBox.module.css';
 
 
 // ✅ Initialize socket globally
-const socket = io('https://virtual-study-group-seven.vercel.app');
+const socket = io('https://virtual-study-group-seven.vercel.app', {
+  transports: ['websocket'],
+});
+
 
 const ChatBox = ({ groupId, sender }) => {
     const [message, setMessage] = useState('');
