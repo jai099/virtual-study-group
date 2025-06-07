@@ -2,107 +2,99 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
-const {Server} = require('socket.io')
+const { Server } = require('socket.io');
 require('dotenv').config();
-const Message = require('./models/Message')
+const Message = require('./models/Message');
 
-//Routes
+// Routes
 const groupRoutes = require('./routes/groupRoutes');
-const messageRoutes = require('./routes/messageRoutes')
-
-
+const messageRoutes = require('./routes/messageRoutes');
 
 const app = express();
 const server = http.createServer(app);
+
+// ✅ Allow your deployed frontend domain
+const allowedOrigin = 'https://virtual-study-group-orih.vercel.app';
+
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000',     
+        origin: allowedOrigin,
         methods: ['GET', 'POST'],
-
     },
 });
-const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// ✅ Apply CORS with correct config
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true,
+}));
+
 app.use(express.json());
+
+// Health check route
 app.get('/', (req, res) => {
     res.send({
         activeStatus: true,
-        error:false,
-    })
-})
+        error: false,
+    });
+});
+
+// Routes
 app.use('/api/groups', groupRoutes);
 app.use('/api/messages', messageRoutes);
 
-app.get('/', (req, res) => {
-    res.send('Server is running');
-});
-
-// Real-time chat using Socket.io
-
-io.on('connection', (socket) =>
-{
-
-    //Join Group chat 
+// Socket.io functionality
+io.on('connection', (socket) => {
+    // Join group chat
     socket.on('joinroom', (groupId) => {
         socket.join(groupId);
         console.log(`User joined group: ${groupId}`);
     });
 
-
-    // Sending messages on group
+    // Handle message sending
     socket.on('sendMessage', async ({ groupId, sender, text }) => {
         try {
-            console.log('Raw Incoming:', { groupId, sender, text });
-
-            // 🛠 Validate groupId format before using it
             if (!mongoose.Types.ObjectId.isValid(groupId)) {
                 console.log('❌ Invalid Group ID:', groupId);
                 return;
             }
-            const objectId = new mongoose.Types.ObjectId(groupId);
 
+            const objectId = new mongoose.Types.ObjectId(groupId);
             const newMessage = new Message({ groupId: objectId, sender, text });
             await newMessage.save();
-            io.to(groupId).emit('receiveMessage', newMessage);
 
-            console.log('✅ Saved and Emitted:', newMessage);
+            io.to(groupId).emit('receiveMessage', newMessage);
+            console.log('✅ Message sent:', newMessage);
         } catch (error) {
             console.error('❌ Error saving message:', error);
         }
     });
 
-    //user started typing 
+    // Typing indicator
     socket.on('typing', (groupId) => {
-        socket.to(groupId).emit("showTyping")
+        socket.to(groupId).emit("showTyping");
     });
 
-    //User stopped typing
     socket.on('stopTyping', (groupId) => {
         socket.to(groupId).emit("hideTyping");
-    })
-
-
+    });
 
     // Disconnect
     socket.on('disconnect', () => {
-        console.log("User disconnected:", socket.id)
+        console.log("User disconnected:", socket.id);
     });
 });
 
-// Mongodb connection
+// Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI)
-
- .then(() => {
+    .then(() => {
         console.log('Connected to MongoDB');
-        server.listen(PORT, () => {
-            console.log(`Server started on http://localhost:${PORT}`);
+        server.listen(process.env.PORT || 5000, () => {
+            console.log(`Server running on http://localhost:${process.env.PORT || 5000}`);
         });
     })
-
-.catch((err) => {
-        console.log('Error connecting to MongoDB:', err.message);
+    .catch((err) => {
+        console.log('MongoDB connection error:', err.message);
     });
-
 
 module.exports = app;
