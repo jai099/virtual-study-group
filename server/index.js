@@ -25,9 +25,12 @@ const io = new Server(server, {
 
 // ✅ Apply CORS with correct config
 app.use(cors({
-    origin: allowedOrigin,
+    origin: ['https://virtual-study-group-orih.vercel.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 }));
+  
 
 app.use(express.json());
 
